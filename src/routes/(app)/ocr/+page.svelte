@@ -123,6 +123,31 @@
 
 	onMount(() => {
 		loadModels();
+
+		const handlePaste = async (event: ClipboardEvent) => {
+			const items = event.clipboardData?.items;
+			if (!items) return;
+
+			for (let i = 0; i < items.length; i++) {
+				if (items[i].type.indexOf('image') !== -1) {
+					const blob = items[i].getAsFile();
+					if (blob) {
+						// Create a new File object with a name, as blobs from clipboard might not have one
+						const pastedFile = new File([blob], `pasted-image-${Date.now()}.${blob.type.split('/')[1] || 'png'}`, { type: blob.type });
+						files = { 0: pastedFile, length: 1 } as unknown as FileList; // Simulate FileList
+						await onSubmit(new Event('submit')); // Trigger submission
+						event.preventDefault(); // Prevent default paste behavior
+						return;
+					}
+				}
+			}
+		};
+
+		window.addEventListener('paste', handlePaste);
+
+		return () => {
+			window.removeEventListener('paste', handlePaste);
+		};
 	});
 </script>
 
