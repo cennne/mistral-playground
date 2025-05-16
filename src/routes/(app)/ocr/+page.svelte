@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
-	import { focusTrap, FileDropzone, getToastStore } from '@skeletonlabs/skeleton';
+	import { focusTrap, FileDropzone, getToastStore, SlideToggle } from '@skeletonlabs/skeleton';
 	import { apiKey } from '$lib/stores/apiKey';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
@@ -82,7 +82,9 @@
 				outputNode.scroll({ top: outputNode.scrollHeight, behavior: 'smooth' });
 			}
 			files = undefined;
-			await updateOrInsertHistory();
+			if (ocr.state.options.saveToDb) {
+				await updateOrInsertHistory();
+			}
 		} catch (__error) {
 			const _error = __error as Error;
 			// Ignore abort errors
@@ -270,6 +272,10 @@
 							{/each}
 						</select>
 					</div>
+					<label class="flex items-center gap-2">
+						<SlideToggle name="saveToDb" bind:checked={ocr.state.options.saveToDb} size="sm" />
+						<span>Save to history</span>
+					</label>
 				</div>
 			</div>
 		{/if}

@@ -47,4 +47,4 @@ export type Page = {
 	dimensions: { dpi: number; height: number; width: number };
 };
 
-export type OCROptions = { model: string };
+export type OCROptions = { model: string; saveToDb: boolean };
